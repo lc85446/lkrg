@@ -25,6 +25,11 @@
 #ifndef P_LKRG_WRAPPER_H
 #define P_LKRG_WRAPPER_H
 
+#include <asm/ptrace.h>
+#ifdef CONFIG_X86
+#include <asm/irqflags.h>
+#include <asm/processor-flags.h>
+#endif
 #if LINUX_VERSION_CODE >= KERNEL_VERSION(3, 14, 0)
 
 static inline void p_set_uid(kuid_t *p_arg, unsigned int p_val) {
@@ -474,6 +479,7 @@ static inline void p_lkrg_close_rw(void) {
 //   preempt_enable(); //_no_resched();
 }
 
+#define p_lkrg_interrupts_enabled(p_regs) !!(native_save_fl() & X86_EFLAGS_IF)
 /* ARM */
 #elif defined(CONFIG_ARM)
 
@@ -606,6 +612,7 @@ static inline void p_lkrg_close_rw(void) {
    preempt_enable(); //_no_resched();
 }
 
+#define p_lkrg_interrupts_enabled interrupts_enabled
 /* ARM64 */
 #elif defined(CONFIG_ARM64)
 
@@ -760,6 +767,7 @@ static inline void p_lkrg_close_rw(void) {
    preempt_enable(); //_no_resched();
 }
 
+#define p_lkrg_interrupts_enabled interrupts_enabled
 #endif
 
 #endif
